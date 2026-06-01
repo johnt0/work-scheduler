@@ -1,0 +1,58 @@
+services:
+  # --- Redis: message broker for BullMQ job queues ---
+  redis:
+    image: redis:7-alpine          # alpine = smaller image, 7 = stable LTS
+    restart: unless-stopped        # auto-restart on crash, but not when you manually stop it
+    ports:
+      - "6379:6379"                # host:container — lets you connect from your machine too
+    volumes:
+      - redis_data:/data           # persist queue data across container restarts
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  # --- Next.js app ---
+  app:
+    build:
+      context: .                   # build from this directory (uses ./Dockerfile)
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - REDIS_URL=redis://redis:6379   # "redis" resolves to the service above via Docker DNS
+      - API_KEYS=dev-secret-key
+      - RATE_LIMIT_MAX=100000000
+    depends_on:
+      redis:
+        condition: service_healthy  # wait until Redis passes its healthcheck before starting
+    develop:
+      watch:                        # hot-reload in dev: sync source changes into the container
+        - action: sync
+          path: ./app
+          target: /app/app
+        - action: sync
+          path: ./lib
+          target: /app/lib
+        - action: rebuild           # rebuild image when deps change
+          path: package.json
+  # --- Background worker ---
+  worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: npm run worker
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=production
+      - REDIS_URL=redis://redis:6379
+      - WORKER_CONCURRENCY=5
+    depends_on:
+      redis:
+        condition: service_healthy
+
+volumes:
+  redis_data:                       # named volume — Docker manages where data lives on disk
