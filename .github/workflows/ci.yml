@@ -21,6 +21,13 @@ jobs:
           --health-timeout 3s
           --health-retries 5
 
+    env:
+      REDIS_URL: redis://localhost:6379
+      API_KEYS: dev-secret-key
+      RATE_LIMIT_MAX: 100
+      RATE_LIMIT_WINDOW_MS: 60000
+      WORKER_CONCURRENCY: 5
+
     steps:
       - uses: actions/checkout@v4
 
@@ -33,14 +40,17 @@ jobs:
 
       - run: npm run lint
 
+      - name: Build
+        run: npm run build
+
+      - name: Start server and worker
+        run: |
+          npm start &
+          npm run worker &
+          timeout 30 bash -c 'until curl -sf http://localhost:3000/api/health; do sleep 1; done'
+
       - name: Run tests
         run: npm test
-        env:
-          REDIS_URL: redis://localhost:6379
-          API_KEYS: ci-test-key
-          RATE_LIMIT_MAX: 100
-          RATE_LIMIT_WINDOW_MS: 60000
-          WORKER_CONCURRENCY: 5
 
   docker:
     runs-on: ubuntu-latest

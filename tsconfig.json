@@ -19,7 +19,9 @@
       }
     ],
     "paths": {
-      "@/*": ["./*"]
+      "@/*": ["./*"],
+      "@bull-board/api/dist/routes": ["./node_modules/@bull-board/api/dist/routes"],
+      "@bull-board/api/dist/queuesApi": ["./node_modules/@bull-board/api/dist/queuesApi"]
     }
   },
   "include": [
