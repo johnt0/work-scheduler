@@ -30,6 +30,7 @@ COPY --from=builder /app/lib ./lib
 # Copy config needed for module resolution
 COPY package*.json ./
 COPY tsconfig.json ./
+COPY next.config.ts ./
 
 EXPOSE 3000
 

@@ -45,7 +45,7 @@ function renderHtml(basePath: string): string {
 function matchRoute(method: string, pathname: string) {
     for (const route of appRoutes.api) {
         const methods = Array.isArray(route.method) ? route.method : [route.method];
-        if (!methods.includes(method.toLowerCase())) continue;
+        if (!methods.includes(method.toLowerCase() as 'get' | 'post' | 'put' | 'patch')) continue;
 
         const routePaths = Array.isArray(route.route) ? route.route : [route.route];
         for (const routePath of routePaths) {

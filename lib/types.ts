@@ -17,7 +17,7 @@ const ReportJobSchema = z.object({
 const WebhookJobSchema = z.object({
     type: z.literal('webhook'),
     url: z.string().url(),
-    payload: z.record(z.unknown()).optional(),
+    payload: z.record(z.string(), z.unknown()).optional(),
     idempotencyKey: z.string().optional(),
 });
 
