@@ -1,6 +1,6 @@
 import { jobQueue } from "@/lib/queue";
 
-export async function GET(request: Request) {
+export async function GET() {
     const jobs = await jobQueue.getJobs(['failed']);
 
     return Response.json(

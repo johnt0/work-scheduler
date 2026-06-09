@@ -1,8 +1,6 @@
 import { jobQueue } from "@/lib/queue";
 
 export async function GET(request: Request, { params }: { params: Promise<{ id: string }> }) {
-    const { searchParams } = new URL(request.url);
-
     const { id } = await params;
 
     const job = await jobQueue.getJob(id);

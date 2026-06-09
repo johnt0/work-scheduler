@@ -42,7 +42,7 @@ function pollStatus(jobId, timeout = 5000) {
     return 'timeout';
 }
 
-export default function () {
+export default function loadTest() {
     const start = Date.now();
 
     const submitRes = submitJob();
