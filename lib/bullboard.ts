@@ -1,8 +1,6 @@
 import { BullMQAdapter } from '@bull-board/api/bullMQAdapter';
 import { jobQueue } from './queue';
-// @ts-expect-error - internal paths not in package exports map
 import { appRoutes } from '@bull-board/api/dist/routes';
-// @ts-expect-error - internal paths not in package exports map
 import { getQueuesApi } from '@bull-board/api/dist/queuesApi';
 import type { BullBoardQueues, UIConfig } from '@bull-board/api/typings/app';
 
