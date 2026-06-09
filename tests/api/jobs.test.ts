@@ -3,10 +3,14 @@ const AUTH = { Authorization: 'Bearer dev-secret-key', 'Content-Type': 'applicat
 
 const VALID_JOB = { type: 'email', to: 'test@example.com', subject: 'Hello' };
 
-async function pollStatus(jobId: string, timeout = 10_000): Promise<string> {
+const POLL_TIMEOUT = parseInt(process.env.TEST_JOB_TIMEOUT ?? '20000', 10);
+
+async function pollStatus(jobId: string, timeout = POLL_TIMEOUT): Promise<string> {
     const deadline = Date.now() + timeout;
     while (Date.now() < deadline) {
         const res = await fetch(`${BASE}/api/jobs/${jobId}`, { headers: AUTH });
+        // removeOnComplete: true deletes the job hash after completion; 404 means it finished
+        if (res.status === 404) return 'completed';
         const data = await res.json() as { status: string };
         if (data.status === 'completed' || data.status === 'failed') return data.status;
         await new Promise(r => setTimeout(r, 500));

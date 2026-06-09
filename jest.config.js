@@ -4,6 +4,8 @@ const config = {
     testEnvironment: 'node',
     testTimeout: 30000,
     extensionsToTreatAsEsm: ['.ts'],
+    globalSetup: './tests/setup/globalSetup.js',
+    globalTeardown: './tests/setup/globalTeardown.js',
     moduleNameMapper: {
         '^@/(.*)$': '<rootDir>/$1',
         '^(\\.{1,2}/.*)\\.js$': '$1',

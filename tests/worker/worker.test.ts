@@ -23,7 +23,7 @@ test('failed job triggers retry with backoff', async () => {
         attempts++;
         throw new Error('deliberate failure');
     }, {
-        connection: new Redis(REDIS_URL, { maxRetriesPerRequest: null }),
+        connection: { url: REDIS_URL, maxRetriesPerRequest: null },
     });
 
     await testQueue.add('retry-test', {}, {
@@ -45,7 +45,7 @@ test('job lands in failed queue after max retries', async () => {
     const worker = new Worker('test-worker', async () => {
         throw new Error('always fails');
     }, {
-        connection: new Redis(REDIS_URL, { maxRetriesPerRequest: null }),
+        connection: { url: REDIS_URL, maxRetriesPerRequest: null },
     });
 
     await testQueue.add('dlq-test', {}, { attempts: 2, backoff: { type: 'fixed', delay: 50 } });
@@ -70,7 +70,7 @@ test('graceful shutdown completes active job before exiting', async () => {
         await new Promise(r => setTimeout(r, 200));
         jobFinished = true;
     }, {
-        connection: new Redis(REDIS_URL, { maxRetriesPerRequest: null }),
+        connection: { url: REDIS_URL, maxRetriesPerRequest: null },
     });
 
     await testQueue.add('shutdown-test', {});
