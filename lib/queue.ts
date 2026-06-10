@@ -9,7 +9,7 @@ export const jobQueue = new Queue('jobs', {
             type: "exponential",
             delay: 1000,
         },
-        removeOnComplete: true,
+        removeOnComplete: { count: 100 },
         removeOnFail: 10,
     },
 });
