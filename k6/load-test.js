@@ -35,6 +35,7 @@ function pollStatus(jobId, timeout = 15000) {
     const deadline = Date.now() + timeout;
     while (Date.now() < deadline) {
         const res = http.get(`${BASE}/api/jobs/${jobId}`);
+        if (res.status === 404) return 'completed';
         const body = JSON.parse(res.body);
         if (body.status === 'completed' || body.status === 'failed') return body.status;
         sleep(0.1);
