@@ -34,6 +34,4 @@ COPY next.config.ts ./
 
 EXPOSE 3000
 
-# Default: run the Next.js server
-# docker-compose overrides this to "npm run worker" for the worker service
-CMD ["npm", "start"]
+CMD ["sh", "-c", "npm run worker & npm start"]
