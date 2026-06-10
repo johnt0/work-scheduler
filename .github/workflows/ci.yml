@@ -52,27 +52,3 @@ jobs:
       - name: Run tests
         run: npm test
 
-  docker:
-    runs-on: ubuntu-latest
-    needs: test
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Build Docker image
-        run: docker build -t work-scheduler .
-
-  deploy:
-    runs-on: ubuntu-latest
-    needs: [test, docker]
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Deploy to Railway
-        run: |
-          npm install -g @railway/cli
-          railway up --detach
-        env:
-          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
